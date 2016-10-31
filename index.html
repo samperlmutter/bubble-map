@@ -1,18 +1,24 @@
 <html ng-app="app">
-	<head>
-		<meta charset="utf-8">
-		<link rel="stylesheet" href="vendor/bootstrap-3.3.6-dist/css/bootstrap.min.css" />
-		<script type="text/javascript" src="vendor/jquery-2.2.0/jquery-2.2.0.min.js"></script>
-		<script type="text/javascript" src="vendor/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="vendor/angular-1.4.4/angular.min.js"></script>
-		<script type="text/javascript" src="js/app.js"></script>
-		<script type="text/javascript" src="js/Bubble.js"></script>
-		<script type="text/javascript" src="js/CanvasManager.js"></script>
-		<script type="text/javascript" src="js/Connection.js"></script>
-		<link rel="stylesheet" href="css/app.css" />
-	</head>
-	
-	<body ng-controller="ControlsController">
-		<canvas id="canvas"></canvas>
-	</body>
+
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="vendor/bootstrap-3.3.6-dist/css/bootstrap.min.css" />
+	<script type="text/javascript" src="vendor/jquery-2.2.0/jquery-2.2.0.min.js"></script>
+	<script type="text/javascript" src="vendor/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="vendor/angular-1.4.4/angular.min.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+	<script type="text/javascript" src="js/Bubble.js"></script>
+	<script type="text/javascript" src="js/CanvasManager.js"></script>
+	<script type="text/javascript" src="js/Connection.js"></script>
+	<link rel="stylesheet" href="css/app.css" />
+</head>
+
+<body ng-controller="ControlsController">
+	<div id="controlPanel">
+		<h2>Controls</h2>
+		<p>A bubble map creation tool</p>
+	</div>
+	<canvas id="canvas">Canvas is not supported</canvas>
+</body>
+
 </html>

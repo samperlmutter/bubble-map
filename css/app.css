@@ -3,3 +3,50 @@ html, body {
 	height: 100%;
 	margin: 0px;
 }
+
+body {
+	background: #dddddd;
+}
+
+#canvas {
+	background: #ffffff;
+}
+
+#controlPanel {
+	position: absolute;
+	left: 20px;
+	top: 20px;
+	padding: 0px 20px 10px 10px;
+	background: rgba(0, 0, 0, 0.3);
+	border: thin solid rgba(0, 0, 0, 0.6);
+	color: #eeeeee;
+	font-family: Droid Sans, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+#controlPanel .h2 {
+	font-weight: normal;
+}
+
+#controlPanel .title {
+	font-size: 2em;
+	color: rgba(255, 255, 0, 0.8);
+}
+
+#controlPanel a:hover {
+	color: yellow;
+}
+
+#controlPanel a {
+	text-decoration: none;
+	color: #cccccc;
+	font-size: 3.5em;
+}
+
+#controlPanel p {
+	margin: 10px;
+	color: rgba(65, 65, 220, 1.0);
+	font-size: 12pt;
+	font-family: Palatino, Arial, Helvetica, sans-serif;
+}

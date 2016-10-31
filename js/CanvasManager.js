@@ -15,6 +15,8 @@ var CanvasManager = function (context) {
 	this.dragOffsetY = 0;
 	this.refreshRate = 15;
 	
+	$("#canvas").get(0).addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+	
 	$("#canvas").dblclick(function (e) {
 		state.bubbles.push(new Bubble(state.context, e.pageX, e.pageY));
 		state.valid = false;
@@ -32,7 +34,6 @@ var CanvasManager = function (context) {
 						state.dragging = true;
 						return;
 					}
-
 
 					if (state.selectedBubble) {
 						state.selectedBubble = null;
@@ -69,6 +70,10 @@ var CanvasManager = function (context) {
 			state.currentLine.mouseY = e.pageY;
 			state.valid = false;
 		}
+	});
+	
+	$(document).mousemove(function (e) {
+		console.log(e.pageX >= $("#controlPanel").offset().left && e.pageX <= $("#controlPanel").outerWidth() && e.pageY >= $("#controlPanel").offset().top && e.pageY <= $("#controlPanel").outerHeight());
 	});
 	
 	$("#canvas").contextmenu(function (e) {
@@ -143,3 +148,7 @@ CanvasManager.prototype.draw = function () {
 		this.valid = true;
 	}
 };
+
+CanvasManager.prototype.controlPanelContainsBubble = function (bubble) {
+//	$("#controlPanel")
+}

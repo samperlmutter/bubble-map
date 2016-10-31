@@ -46,9 +46,6 @@ var CanvasManager = function (context) {
 							state.connectionStarted = true;
 							state.currentLine = new Connection(state.context, state.bubbles[i], e.pageX, e.pageY);
 							state.valid = false;
-							if (CanvasManager.test == 1) {
-								state.currentLine.setInnerLinePoints(e.pageX, e.pageY);
-							}
 						}
 					}
 					break;
@@ -60,8 +57,6 @@ var CanvasManager = function (context) {
 		state.dragging = false;
 	});
 	
-	var startConnectionInsideState;
-	var previousStartConnectionInsideState;
 	$("#canvas").mousemove(function (e) {
 		if (state.dragging) {
 			state.selectedBubble.centerX = e.pageX - state.dragOffsetX;
@@ -70,16 +65,9 @@ var CanvasManager = function (context) {
 		}
 		
 		if (state.connectionStarted) {
-			startConnectionInsideState = state.currentLine.fromBubble.contains(e.pageX, e.pageY);
 			state.currentLine.mouseX = e.pageX;
 			state.currentLine.mouseY = e.pageY;
 			state.valid = false;
-			
-			if (!previousStartConnectionInsideState && startConnectionInsideState) {
-				state.currentLine.setInnerLinePoints(e.pageX, e.pageY);
-			}
-//			console.log(!previousStartConnectionInsideState && startConnectionInside);
-			previousStartConnectionInsideState = state.currentLine.fromBubble.contains(e.pageX, e.pageY);
 		}
 	});
 	
@@ -136,40 +124,21 @@ CanvasManager.prototype.draw = function () {
 	if (!this.valid) {
 		this.clear();
 		
-		if (CanvasManager.test == 3) {
-			for (var i = 0; i < this.connections.length; i++) {
-				this.connections[i].draw();
-			}
-			
-			if (this.connectionStarted) {
-				this.currentLine.draw();
-			}
-
-			for (var i = 0; i < this.bubbles.length; i++) {
-				this.bubbles[i].draw();
-			}
-
-			if (this.selectedBubble != null) {
-				this.selectedBubble.drawSelected();
-			}
-		} else {
-			for (var i = 0; i < this.connections.length; i++) {
-				this.connections[i].draw();
-			}
-
-			for (var i = 0; i < this.bubbles.length; i++) {
-				this.bubbles[i].draw();
-			}
-
-			if (this.selectedBubble != null) {
-				this.selectedBubble.drawSelected();
-			}
-
-			if (this.connectionStarted) {
-				this.currentLine.draw();
-			}
+		for (var i = 0; i < this.connections.length; i++) {
+			this.connections[i].draw();
 		}
-		
+
+		if (this.connectionStarted) {
+			this.currentLine.draw();
+		}
+
+		for (var i = 0; i < this.bubbles.length; i++) {
+			this.bubbles[i].draw();
+		}
+
+		if (this.selectedBubble != null) {
+			this.selectedBubble.drawSelected();
+		}
 		
 		this.valid = true;
 	}

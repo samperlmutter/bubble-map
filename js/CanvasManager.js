@@ -5,9 +5,11 @@ var CanvasManager = function (context) {
 	this.valid = true;
 	this.dragging = false;
 	this.connectionStarted = false;
+	this.inControlPanel = false;
 	
 	this.bubbles = [];
 	this.selectedBubble = null;
+	this.selectedLine = null;
 	this.currentLine = null;
 	this.connections = [];
 	
@@ -15,7 +17,18 @@ var CanvasManager = function (context) {
 	this.dragOffsetY = 0;
 	this.refreshRate = 15;
 	
-	$("#canvas").get(0).addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+	$("#canvas").get(0).addEventListener('selectstart', function (e) {
+		e.preventDefault();
+		return false;
+	}, false);
+	
+	$("#controlPanel").get(0).addEventListener('selectstart', function (e) {
+		console.log("selectstart");
+		if (state.dragging) {
+			e.preventDefault();
+		}
+		return false;
+	}, true);
 	
 	$("#canvas").dblclick(function (e) {
 		state.bubbles.push(new Bubble(state.context, e.pageX, e.pageY));
@@ -23,11 +36,12 @@ var CanvasManager = function (context) {
 	});
 	
 	$("#canvas").mousedown(function (e) {
-		for (var i = state.bubbles.length - 1; i >= 0; i--) {
-			switch (e.button) {
-				case 0:
+		switch (e.button) {
+			case 0:
+				for (var i = state.bubbles.length - 1; i >= 0; i--) {
 					if (state.bubbles[i].contains(e.pageX, e.pageY)) {
 						state.selectedBubble = state.bubbles[i];
+						state.selectedLine = null;
 						state.dragOffsetX = e.pageX - state.selectedBubble.centerX;
 						state.dragOffsetY = e.pageY - state.selectedBubble.centerY;
 						state.valid = false;
@@ -37,11 +51,29 @@ var CanvasManager = function (context) {
 
 					if (state.selectedBubble) {
 						state.selectedBubble = null;
+						state.selectedLine = null;
 						state.valid = false;
 					}
-					
-					break;
-				case 2:
+				}
+
+				for (var i  = state.connections.length - 1; i >= 0; i--) {
+					if (state.connections[i].contains(e.pageX, e.pageY)) {
+						state.selectedLine = state.connections[i];
+						state.selectedBubble = null;
+						state.valid = false;
+						return;
+					}
+
+					if (state.selectedLine) {
+						state.selectedBubble = null;
+						state.selectedLine = null;
+						state.valid = false;
+					}
+				}
+
+				break;
+			case 2:
+				for (var i = state.bubbles.length - 1; i >= 0; i--) {
 					if (!state.connectionStarted) {
 						if (state.bubbles[i].contains(e.pageX, e.pageY)) {
 							state.connectionStarted = true;
@@ -49,8 +81,9 @@ var CanvasManager = function (context) {
 							state.valid = false;
 						}
 					}
-					break;
-			}
+				}
+
+				break;
 		}
 	});
 	
@@ -58,10 +91,33 @@ var CanvasManager = function (context) {
 		state.dragging = false;
 	});
 	
+	$(document).mousemove(function (e) {
+		if (state.selectedBubble != null && (state.selectedBubble.centerX + state.selectedBubble.radius > $("#controlPanel").offset().left && state.selectedBubble.centerX - state.selectedBubble.radius < $("#controlPanel").offset().left + $("#controlPanel").outerWidth(true)) && (state.selectedBubble.centerY - state.selectedBubble.radius < $("#controlPanel").offset().top + $("#controlPanel").outerHeight(true) && state.selectedBubble.centerY + state.selectedBubble.radius > $("#controlPanel").offset().top)) {
+			state.inControlPanel = true;
+		} else {
+			state.inControlPanel = false;
+		}
+	});
+	
 	$("#canvas").mousemove(function (e) {
+		var newCenterX = e.pageX - state.dragOffsetX;
+		var newCenterY = e.pageY - state.dragOffsetY;
+		var leftBound = $("#controlPanel").offset().left;
+		var rightBound = $("#controlPanel").offset().left + $("#controlPanel").outerWidth(true);
+		var bottomBound = $("#controlPanel").offset().top + $("#controlPanel").outerHeight(true);
+		var topBound = $("#controlPanel").offset().top;
+		
 		if (state.dragging) {
-			state.selectedBubble.centerX = e.pageX - state.dragOffsetX;
-			state.selectedBubble.centerY = e.pageY - state.dragOffsetY;
+			if (state.inControlPanel) {
+				if (newCenterX > rightBound || newCenterX < leftBound || newCenterY > bottomBound || newCenterY < topBound) {
+					state.selectedBubble.centerX = newCenterX;
+					state.selectedBubble.centerY = newCenterY;
+				}
+			} else {
+				state.selectedBubble.centerX = newCenterX;
+				state.selectedBubble.centerY = newCenterY;
+			}
+			
 			state.valid = false;
 		}
 		
@@ -70,10 +126,6 @@ var CanvasManager = function (context) {
 			state.currentLine.mouseY = e.pageY;
 			state.valid = false;
 		}
-	});
-	
-	$(document).mousemove(function (e) {
-		console.log(e.pageX >= $("#controlPanel").offset().left && e.pageX <= $("#controlPanel").outerWidth() && e.pageY >= $("#controlPanel").offset().top && e.pageY <= $("#controlPanel").outerHeight());
 	});
 	
 	$("#canvas").contextmenu(function (e) {
@@ -111,6 +163,10 @@ var CanvasManager = function (context) {
 	}, this.refreshRate);
 };
 
+CanvasManager.distanceTo = function (x1, y1, x2, y2) {
+	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+};
+
 CanvasManager.prototype.connectionExists = function (connection) {
 	for (var i = 0; i < this.connections.length; i++) {
 		if ((this.connections[i].fromBubble == connection.fromBubble && this.connections[i].toBubble == connection.toBubble) || (this.connections[i].fromBubble == connection.toBubble && this.connections[i].toBubble == connection.fromBubble)) {
@@ -127,10 +183,15 @@ CanvasManager.prototype.clear = function () {
 
 CanvasManager.prototype.draw = function () {
 	if (!this.valid) {
+		
 		this.clear();
 		
 		for (var i = 0; i < this.connections.length; i++) {
 			this.connections[i].draw();
+		}
+		
+		if (this.selectedLine != null) {
+			this.selectedLine.drawSelected();
 		}
 
 		if (this.connectionStarted) {
@@ -148,7 +209,3 @@ CanvasManager.prototype.draw = function () {
 		this.valid = true;
 	}
 };
-
-CanvasManager.prototype.controlPanelContainsBubble = function (bubble) {
-//	$("#controlPanel")
-}

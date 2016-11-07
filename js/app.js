@@ -11,6 +11,12 @@ $(document).ready(function () {
 var app;
 app = angular.module('app', []);
 
+
 app.controller("ControlsController", function ($scope) {
-	
+	$("#controlPanel").get(0).addEventListener('selectstart', function (e) {
+		if (canvasManager.dragging) {
+			e.preventDefault();
+		}
+		return false;
+	}, true);
 });

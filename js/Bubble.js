@@ -45,7 +45,7 @@ Bubble.prototype.addChild = function (bubble) {
 };
 
 Bubble.prototype.contains = function (x, y) {
-	var pointCenterDistance = Math.sqrt(Math.pow(x - this.centerX, 2) + Math.pow(y - this.centerY, 2));
+	var pointCenterDistance = CanvasManager.distanceTo(x, y, this.centerX, this.centerY);
 	
 	return this.radius > pointCenterDistance;
 }

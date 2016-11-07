@@ -17,8 +17,25 @@
 	<div id="controlPanel">
 		<h2>Controls</h2>
 		<p>A bubble map creation tool</p>
+		<div class="settings" ng-show="selectionType == selectionCase.BUBBLE">
+			<h3>Bubble</h3>
+			<hr/>
+			<label for="radius">Radius</label>
+			<input ng-model="selection.radius" id="radius" value="50" min="1" type="number" ng-change="invalidate()">
+			<br>
+			<label for="text">Text</label>
+			<input type="text" id="text" ng-model="selection.text" ng-change="invalidate()">
+			<br>
+			<label for="coordinates">Coordinates</label>
+			<input class="coordinate" type="number" ng-model="selection.centerX" min="0" ng-change="invalidate()">
+			<input class="coordinate" type="number" ng-model="selection.centerY" min="0" ng-change="invalidate()">
+		</div>
+		<div class="settings" ng-show="selectionType == selectionCase.LINE">
+			<h3>Line</h3>
+			<hr/>
+		</div>
 	</div>
-	<canvas id="canvas">Canvas is not supported</canvas>
+	<canvas id="canvas" ng-click="updateSelection()">Canvas is not supported</canvas>
 </body>
 
 </html>

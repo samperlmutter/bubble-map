@@ -19,4 +19,29 @@ app.controller("ControlsController", function ($scope) {
 		}
 		return false;
 	}, true);
+	
+	$scope.selectionCase = {
+		NOTHING: 0,
+		BUBBLE: 1,
+		LINE: 2
+	};
+	$scope.selectionType = $scope.selectionCase.NOTHING;
+	$scope.selection = null;
+	
+	$scope.updateSelection = function () {
+		if (canvasManager.selectedBubble != null) {
+			$scope.selectionType = $scope.selectionCase.BUBBLE;
+			$scope.selection = canvasManager.selectedBubble;
+		} else if (canvasManager.selectedLine != null) {
+			$scope.selectionType = $scope.selectionCase.LINE;
+			$scope.selection = canvasManager.selectedLine;
+		} else {
+			$scope.selectionType = $scope.selectionCase.NOTHING;
+			$scope.selection = null;
+		}
+	};
+	
+	$scope.invalidate = function () {
+		canvasManager.valid = false;
+	};
 });

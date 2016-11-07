@@ -23,7 +23,6 @@ var CanvasManager = function (context) {
 	}, false);
 	
 	$("#controlPanel").get(0).addEventListener('selectstart', function (e) {
-		console.log("selectstart");
 		if (state.dragging) {
 			e.preventDefault();
 		}

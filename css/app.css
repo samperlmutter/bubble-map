@@ -25,7 +25,20 @@ body {
 	cursor: pointer;
 }
 
+.coordinate {
+	max-width: 40px;
+}
+
+.settings {
+	color: black;
+}
+
 #controlPanel h2 {
+	font-weight: normal;
+	text-align: center;
+}
+
+#controlPanel h3 {
 	font-weight: normal;
 	text-align: center;
 }

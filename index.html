@@ -14,25 +14,40 @@
 </head>
 
 <body ng-controller="ControlsController">
-	<div id="controlPanel">
-		<h2>Controls</h2>
-		<p>A bubble map creation tool</p>
-		<div class="settings" ng-show="selectionType == selectionCase.BUBBLE">
-			<h3>Bubble</h3>
-			<hr/>
-			<label for="radius">Radius</label>
-			<input ng-model="selection.radius" id="radius" value="50" min="1" type="number" ng-change="invalidate()">
-			<br>
-			<label for="text">Text</label>
-			<input type="text" id="text" ng-model="selection.text" ng-change="invalidate()">
-			<br>
-			<label for="coordinates">Coordinates</label>
-			<input class="coordinate" type="number" ng-model="selection.centerX" min="0" ng-change="invalidate()">
-			<input class="coordinate" type="number" ng-model="selection.centerY" min="0" ng-change="invalidate()">
+	<div id="controlPanel" class="panel panel-info">
+		<!--Nothing selected-->
+		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.NOTHING">Nothing Selected</div>
+		<div class="setting panel-body" ng-show="selection.type == selectionCase.NOTHING">
+			<h5>Please click on a bubble or line to access its controls</h5>
 		</div>
-		<div class="settings" ng-show="selectionType == selectionCase.LINE">
-			<h3>Line</h3>
-			<hr/>
+		<!--Bubble controls-->
+		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.BUBBLE">Bubble Controls</div>
+		<div class="setting panel-body" ng-show="selection.type == selectionCase.BUBBLE">
+			<div class="form-group">
+				<label for="radius">Radius</label>
+				<input class="setting form-control" ng-model="selection.selection.radius" id="radius" value="50" min="1" type="number" ng-change="invalidate()">
+			</div>
+			<div class="form-group">
+				<label for="text">Text</label>
+				<input type="text" id="text" ng-model="selection.selection.text" ng-change="invalidate()" class="setting form-control">
+			</div>
+			<div class="form-group">
+				<label for="coordinates">Coordinates</label>
+				<div class="input-group">
+					<input class="setting form-control" type="number" ng-model="selection.selection.centerX" min="0" ng-change="invalidate()">
+					<input class="setting form-control" type="number" ng-model="selection.selection.centerY" min="0" ng-change="invalidate()">
+				</div>
+			</div>
+			<div class="form-group">
+				<button type="button" class="btn btn-block btn-danger" ng-click="delete()">Delete</button>
+			</div>
+		</div>
+		<!--Line controls-->
+		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.LINE">Line Controls</div>
+		<div class="setting panel-body" ng-show="selection.type == selectionCase.LINE">
+			<div class="form-group">
+				<button type="button" class="btn btn-block btn-danger" ng-click="delete()">Delete</button>
+			</div>
 		</div>
 	</div>
 	<canvas id="canvas" ng-click="updateSelection()">Canvas is not supported</canvas>

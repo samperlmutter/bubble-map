@@ -137,10 +137,8 @@ var CanvasManager = function (context) {
 					state.currentLine.toBubble = state.bubbles[i];
 					if (!state.connectionExists(state.currentLine)) {
 						state.connections.push(state.currentLine);
-						state.currentLine.fromBubble.children.push({
-							child: state.currentLine.toBubble,
-							connection: state.currentLine
-						});
+						state.currentLine.fromBubble.connections.push(state.currentLine);
+						state.currentLine.toBubble.connections.push(state.currentLine);
 					}
 					state.currentLine = null;
 					state.valid = false;
@@ -182,7 +180,6 @@ CanvasManager.prototype.clear = function () {
 
 CanvasManager.prototype.draw = function () {
 	if (!this.valid) {
-		
 		this.clear();
 		
 		for (var i = 0; i < this.connections.length; i++) {

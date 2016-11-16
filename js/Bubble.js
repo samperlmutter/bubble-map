@@ -4,7 +4,7 @@ var Bubble = function (context, centerX, centerY) {
 	this.centerY = centerY;
 	this.text = "";
 	this.radius = 50;
-	this.children = [];
+	this.connections = [];
 	
 	this.selectedBorderColor = "#FF0000";
 	this.selectedBorderWidth = 2;
@@ -39,10 +39,6 @@ Bubble.prototype.drawSelected = function () {
 	this.context.lineWidth = 1;
 	this.context.strokeText(this.text, this.centerX, this.centerY);
 }
-
-Bubble.prototype.addChild = function (bubble) {
-	this.children.push(bubble);
-};
 
 Bubble.prototype.contains = function (x, y) {
 	var pointCenterDistance = CanvasManager.distanceTo(x, y, this.centerX, this.centerY);

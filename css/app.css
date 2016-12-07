@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
 	width: 100%;
 	height: 100%;
 	margin: 0px;
@@ -12,7 +13,7 @@ html, body {
 	position: absolute;
 	left: 20px;
 	top: 20px;
-	max-width: 20vw;
+	min-width: auto;
 }
 
 .setting {

@@ -33,8 +33,8 @@ Bubble.prototype.draw = function () {
 Bubble.prototype.drawSelected = function () {
 	this.context.beginPath();
 	this.context.strokeStyle = this.selectedBorderColor;
-	this.context.lineWidth = this.selectedBorderWidth;
 	this.context.fillStyle = "#FFFFFF";
+	this.context.lineWidth = this.selectedBorderWidth;
 	this.context.ellipse(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, 0, 2 * Math.PI);
 	this.context.fill();
 	this.context.stroke();
@@ -57,7 +57,7 @@ Bubble.prototype.drawText = function () {
 
 Bubble.prototype.calculateLineCenter = function (lineNum, numLines) {
 	return numLines > 0 ? this.centerY + (10 * lineNum) + ((-5 * numLines) + 5) : this.centerY;
-}
+};
 
 Bubble.prototype.getLines = function () {
 	var words = this.text.split(" ");
@@ -77,17 +77,13 @@ Bubble.prototype.getLines = function () {
 	
 	if (lines[0] != "") {
 		if (this.radiusY - (this.centerY - (this.calculateLineCenter(0, lines.length) - (Bubble.textHeight / 2))) <= Bubble.textPaddingY) {
-			this.radiusY = (this.centerY - this.calculateLineCenter(0, lines.length)) + Bubble.textPaddingY;
+			this.radiusY = (this.centerY - this.calculateLineCenter(0, lines.length)) + (Bubble.textHeight / 2) + Bubble.textPaddingY;
 			
 			this.radiusX = this.radiusRatio * this.radiusY;
 		}
 	}
 	
 	return lines;
-};
-
-Bubble.prototype.fitTextSize = function () {
-	
 };
 
 Bubble.prototype.lineToLong = function (line) {

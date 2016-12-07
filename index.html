@@ -16,16 +16,25 @@
 <body ng-controller="ControlsController">
 	<div id="controlPanel" class="panel panel-info">
 		<!--Nothing selected-->
-		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.NOTHING">Nothing Selected</div>
+		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.NOTHING">Instructions</div>
 		<div class="setting panel-body" ng-show="selection.type == selectionCase.NOTHING">
-			<h5>Please click on a bubble or line to access its controls</h5>
+			<h5>Double click to create a bubble</h5>
+			<br/>
+			<h5>Left click and drag to move a bubble</h5>
+			<br>
+			<h5>Right click and drag from bubble to another to create a connection between the two</h5>
+			<br>
+			<h5>Left click on a bubble or line to access settings for it</h5>
 		</div>
 		<!--Bubble controls-->
 		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.BUBBLE">Bubble Controls</div>
 		<div class="setting panel-body" ng-show="selection.type == selectionCase.BUBBLE">
 			<div class="form-group">
 				<label for="radius">Radius</label>
-				<input class="setting form-control" ng-model="selection.selection.radius" id="radius" value="50" min="1" type="number" ng-change="invalidate()">
+				<div class="input-group">
+					<input class="setting form-control" ng-model="selection.selection.radiusX" id="radiusX" value="50" min="1" type="number" ng-change="invalidate()">
+					<input class="setting form-control" ng-model="selection.selection.radiusY" id="radiusY" value="30" min="1" type="number" ng-change="invalidate()">
+				</div>
 			</div>
 			<div class="form-group">
 				<label for="text">Text</label>

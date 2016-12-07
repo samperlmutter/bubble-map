@@ -36,6 +36,7 @@ var CanvasManager = function (context) {
 	
 	$("#canvas").mousedown(function (e) {
 		switch (e.button) {
+			//Left click
 			case 0:
 				for (var i = state.bubbles.length - 1; i >= 0; i--) {
 					if (state.bubbles[i].contains(e.pageX, e.pageY)) {
@@ -71,6 +72,7 @@ var CanvasManager = function (context) {
 				}
 
 				break;
+			//Right click
 			case 2:
 				for (var i = state.bubbles.length - 1; i >= 0; i--) {
 					if (!state.connectionStarted) {

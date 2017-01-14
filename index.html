@@ -29,6 +29,7 @@
 		<!--Bubble controls-->
 		<div class="text-center panel-heading h4" ng-show="selection.type == selectionCase.BUBBLE">Bubble Controls</div>
 		<div class="setting panel-body" ng-show="selection.type == selectionCase.BUBBLE">
+<!--
 			<div class="form-group">
 				<label for="radius">Radius</label>
 				<div class="input-group">
@@ -36,6 +37,7 @@
 					<input class="setting form-control" ng-model="selection.selection.radiusY" id="radiusY" value="30" min="1" type="number" ng-change="invalidate()">
 				</div>
 			</div>
+-->
 			<div class="form-group">
 				<label for="text">Text</label>
 				<textarea id="text" ng-model="selection.selection.text" ng-change="invalidate()" class="setting form-control"></textarea>

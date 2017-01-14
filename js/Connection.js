@@ -24,14 +24,13 @@ var Connection = function (context, fromBubble, mouseX, mouseY) {
 Connection.prototype.calculateEndpoints = function () {
 	if (this.toBubble != null) {
 		var bubbleCenterDistance = CanvasManager.distanceTo(this.fromBubble.centerX, this.fromBubble.centerY, this.toBubble.centerX, this.toBubble.centerY);
-		this.line.start.x = this.fromBubble.centerX/* + (this.fromBubble.radius * ((this.toBubble.centerX - this.fromBubble.centerX) / bubbleCenterDistance))*/;
-		this.line.start.y = this.fromBubble.centerY/* + (this.fromBubble.radius * ((this.toBubble.centerY - this.fromBubble.centerY) / bubbleCenterDistance))*/;
-		this.line.end.x = this.toBubble.centerX/* + (this.toBubble.radius * ((this.fromBubble.centerX - this.toBubble.centerX) / bubbleCenterDistance))*/;
-		this.line.end.y = this.toBubble.centerY/* + (this.toBubble.radius * ((this.fromBubble.centerY - this.toBubble.centerY) / bubbleCenterDistance))*/;
+		this.line.start.x = this.fromBubble.centerX;
+		this.line.start.y = this.fromBubble.centerY;
+		this.line.end.x = this.toBubble.centerX;
+		this.line.end.y = this.toBubble.centerY;
 	} else {
 		var mouseFromBubbleCenterDistance = CanvasManager.distanceTo(this.mouseX, this.mouseY, this.fromBubble.centerX, this.fromBubble.centerY);
-//		this.line.start.x = this.fromBubble.centerX + (this.fromBubble.radius * ((this.mouseX - this.fromBubble.centerX) / mouseFromBubbleCenterDistance));
-//		this.line.start.y = this.fromBubble.centerY + (this.fromBubble.radius * ((this.mouseY - this.fromBubble.centerY) / mouseFromBubbleCenterDistance));
+		
 		this.line.start.x = this.fromBubble.centerX;
 		this.line.start.y = this.fromBubble.centerY;
 		this.line.end.x = this.mouseX;

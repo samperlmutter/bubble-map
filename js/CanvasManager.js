@@ -93,11 +93,11 @@ var CanvasManager = function (context) {
 	});
 	
 	$(document).mousemove(function (e) {
-		if (state.selectedBubble != null && (state.selectedBubble.centerX + state.selectedBubble.radius > $("#controlPanel").offset().left && state.selectedBubble.centerX - state.selectedBubble.radius < $("#controlPanel").offset().left + $("#controlPanel").outerWidth(true)) && (state.selectedBubble.centerY - state.selectedBubble.radius < $("#controlPanel").offset().top + $("#controlPanel").outerHeight(true) && state.selectedBubble.centerY + state.selectedBubble.radius > $("#controlPanel").offset().top)) {
-			state.inControlPanel = true;
-		} else {
-			state.inControlPanel = false;
-		}
+//		if (state.selectedBubble != null && (state.selectedBubble.centerX + state.selectedBubble.radius > $("#controlPanel").offset().left && state.selectedBubble.centerX - state.selectedBubble.radius < $("#controlPanel").offset().left + $("#controlPanel").outerWidth(true)) && (state.selectedBubble.centerY - state.selectedBubble.radius < $("#controlPanel").offset().top + $("#controlPanel").outerHeight(true) && state.selectedBubble.centerY + state.selectedBubble.radius > $("#controlPanel").offset().top)) {
+//			state.inControlPanel = true;
+//		} else {
+//			state.inControlPanel = false;
+//		}
 	});
 	
 	$("#canvas").mousemove(function (e) {

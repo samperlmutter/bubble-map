@@ -3,15 +3,18 @@ var Bubble = function (context, centerX, centerY) {
 	this.centerX = centerX;
 	this.centerY = centerY;
 	this.text = "";
-	this.radius = 50;
-	this.radiusX = 50;
-	this.radiusY = 30;
-	this.radiusRatio = 5.0 / 3.0;
+	this.radiusMultiplier = 10;
 	this.connections = [];
 	
 	this.selectedBorderColor = "#FF0000";
 	this.selectedBorderWidth = 2;
 };
+
+Bubble.radiusRatio = 5.0 / 3.5;
+
+Bubble.radiusXConstant = 5.0;
+
+Bubble.radiusYConstant = 3.5;
 
 Bubble.textPaddingX = 15;
 
@@ -23,7 +26,7 @@ Bubble.prototype.draw = function () {
 	this.context.beginPath();
 	this.context.strokeStyle = "#000000";
 	this.context.fillStyle = "#FFFFFF";
-	this.context.ellipse(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, 0, 2 * Math.PI);
+	this.context.ellipse(this.centerX, this.centerY, this.getRadiusX(), this.getRadiusY(), 0, 0, 2 * Math.PI);
 	this.context.fill();
 	this.context.stroke();
 	
@@ -35,7 +38,7 @@ Bubble.prototype.drawSelected = function () {
 	this.context.strokeStyle = this.selectedBorderColor;
 	this.context.fillStyle = "#FFFFFF";
 	this.context.lineWidth = this.selectedBorderWidth;
-	this.context.ellipse(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, 0, 2 * Math.PI);
+	this.context.ellipse(this.centerX, this.centerY, this.getRadiusX(), this.getRadiusY(), 0, 0, 2 * Math.PI);
 	this.context.fill();
 	this.context.stroke();
 	
@@ -55,6 +58,14 @@ Bubble.prototype.drawText = function () {
 	}
 };
 
+Bubble.prototype.getRadiusX = function () {
+	return Bubble.radiusXConstant * this.radiusMultiplier;
+};
+
+Bubble.prototype.getRadiusY = function () {
+	return Bubble.radiusYConstant * this.radiusMultiplier;
+};
+
 Bubble.prototype.calculateLineCenter = function (lineNum, numLines) {
 	return numLines > 0 ? this.centerY + (10 * lineNum) + ((-5 * numLines) + 5) : this.centerY;
 };
@@ -67,8 +78,10 @@ Bubble.prototype.getLines = function () {
     for (var i = 1; i < words.length; i++) {
         var word = words[i];
         if (!this.lineToLong(currentLine + " " + word)) {
+			//Add word to line
             currentLine += " " + word;
         } else {
+			//Wrap line
             lines.push(currentLine);
             currentLine = word;
         }
@@ -76,10 +89,10 @@ Bubble.prototype.getLines = function () {
     lines.push(currentLine);
 	
 	if (lines[0] != "") {
-		if (this.radiusY - (this.centerY - (this.calculateLineCenter(0, lines.length) - (Bubble.textHeight / 2))) <= Bubble.textPaddingY) {
-			this.radiusY = (this.centerY - this.calculateLineCenter(0, lines.length)) + (Bubble.textHeight / 2) + Bubble.textPaddingY;
-			
-			this.radiusX = this.radiusRatio * this.radiusY;
+		//Check if too many lines for bubble height
+		if (this.getRadiusY() - (this.centerY - (this.calculateLineCenter(0, lines.length) - (Bubble.textHeight / 2))) <= Bubble.textPaddingY) {
+			//Increase bubble size appropriately
+			this.radiusMultiplier = ((this.centerY - this.calculateLineCenter(0, lines.length)) + (Bubble.textHeight / 2) + Bubble.textPaddingY) / Bubble.radiusYConstant;
 		}
 	}
 	
@@ -87,14 +100,14 @@ Bubble.prototype.getLines = function () {
 };
 
 Bubble.prototype.lineToLong = function (line) {
-	return this.context.measureText(line).width >= (2 * this.radiusX) - (2 * Bubble.textPaddingX);
+	return this.context.measureText(line).width >= (2 * this.getRadiusX()) - (2 * Bubble.textPaddingX);
 };
 
 Bubble.prototype.contains = function (x, y) {
 	var pointCenterDistance = CanvasManager.distanceTo(x, y, this.centerX, this.centerY);
 	var angle = (Math.acos((x - this.centerX) / pointCenterDistance) * 180) / Math.PI;
-	var radiusPointX = this.centerX + (this.radiusX * ((x - this.centerX) / pointCenterDistance));
-	var radiusPointY = this.centerY + (this.radiusY * ((y - this.centerY) / pointCenterDistance));
+	var radiusPointX = this.centerX + (this.getRadiusX() * ((x - this.centerX) / pointCenterDistance));
+	var radiusPointY = this.centerY + (this.getRadiusY() * ((y - this.centerY) / pointCenterDistance));
 	var radius = CanvasManager.distanceTo(this.centerX, this.centerY, radiusPointX, radiusPointY);
 	
 	return radius > pointCenterDistance;

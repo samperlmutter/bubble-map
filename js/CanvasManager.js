@@ -31,6 +31,11 @@ var CanvasManager = function (context) {
 	}, true);
 	
 	$("#canvas").dblclick(function (e) {
+		for (var i = 0; i < state.bubbles.length; i++) {
+			if (state.bubbles[i].contains(e.pageX, e.pageY)) {
+				return;
+			}
+		}
 		state.bubbles.push(new Bubble(state.context, e.pageX, e.pageY));
 		state.valid = false;
 	});

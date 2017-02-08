@@ -4,6 +4,7 @@ var CanvasManager = function (context) {
 	
 	this.valid = true;
 	this.dragging = false;
+	this.draggingEdge = false;
 	this.connectionStarted = false;
 	this.inControlPanel = false;
 	
@@ -39,6 +40,14 @@ var CanvasManager = function (context) {
 			//Left click
 			case 0:
 				for (var i = state.bubbles.length - 1; i >= 0; i--) {
+					if (state.bubbles[i].onEdge(e.pageX, e.pageY)) {
+						state.selectedBubble = state.bubbles[i];
+						state.selectedLine = null;
+						state.valid = false;
+						state.draggingEdge = true;
+						return;
+					}
+					
 					if (state.bubbles[i].contains(e.pageX, e.pageY)) {
 						state.selectedBubble = state.bubbles[i];
 						state.selectedLine = null;
@@ -90,14 +99,7 @@ var CanvasManager = function (context) {
 	
 	$("#canvas").mouseup(function (e) {
 		state.dragging = false;
-	});
-	
-	$(document).mousemove(function (e) {
-//		if (state.selectedBubble != null && (state.selectedBubble.centerX + state.selectedBubble.radius > $("#controlPanel").offset().left && state.selectedBubble.centerX - state.selectedBubble.radius < $("#controlPanel").offset().left + $("#controlPanel").outerWidth(true)) && (state.selectedBubble.centerY - state.selectedBubble.radius < $("#controlPanel").offset().top + $("#controlPanel").outerHeight(true) && state.selectedBubble.centerY + state.selectedBubble.radius > $("#controlPanel").offset().top)) {
-//			state.inControlPanel = true;
-//		} else {
-//			state.inControlPanel = false;
-//		}
+		state.draggingEdge = false;
 	});
 	
 	$("#canvas").mousemove(function (e) {
@@ -125,6 +127,24 @@ var CanvasManager = function (context) {
 		if (state.connectionStarted) {
 			state.currentLine.mouseX = e.pageX;
 			state.currentLine.mouseY = e.pageY;
+			state.valid = false;
+		}
+		
+		for (var i = 0; i < state.bubbles.length; i++) {
+			if (state.bubbles[i].onEdge(e.pageX, e.pageY)) {
+				if (state.changeCursorArrow(e.pageX, e.pageY, state.bubbles[i])) {
+					e.preventDefault();
+				}
+			} else {
+				state.resetCursorArrow();
+			}
+		}
+		
+		if (state.draggingEdge) {
+			if (state.changeCursorArrow(e.pageX, e.pageY, state.selectedBubble)) {
+				e.preventDefault();
+			}
+			state.selectedBubble.changeSize(e.pageX, e.pageY);
 			state.valid = false;
 		}
 	});
@@ -206,4 +226,25 @@ CanvasManager.prototype.draw = function () {
 		
 		this.valid = true;
 	}
+};
+
+CanvasManager.prototype.changeCursorArrow = function (x, y, bubble) {
+	var angle = (Math.atan2(y - bubble.centerY, x - bubble.centerX) * 180) / Math.PI;
+	var currentCursorAngle = $("#canvas").get(0).style.cursor;
+	
+	if ((angle >= -6 && angle <= 6) || ((angle >= 174 && angle <= 180) || (angle >= -180 && angle <= -174))) {
+		$("#canvas").get(0).style.cursor = "ew-resize";
+	} else if ((angle <= -84 && angle >= -96) || (angle >= 86 && angle <= 96)) {
+		$("#canvas").get(0).style.cursor = "ns-resize";
+	} else if ((angle < -6 && angle > -84) || (angle > 96 && angle < 174)) {
+		$("#canvas").get(0).style.cursor = "ne-resize";
+	} else if ((angle < -96 && angle > -174) || (angle < 84 && angle > 6)) {
+		$("#canvas").get(0).style.cursor = "nw-resize";
+	}
+	
+	return $("#canvas").get(0).style.cursor != currentCursorAngle;
+};
+
+CanvasManager.prototype.resetCursorArrow = function () {
+	$("#canvas").get(0).style.cursor = "default";
 };

@@ -3,7 +3,7 @@ var Bubble = function (context, centerX, centerY) {
 	this.centerX = centerX;
 	this.centerY = centerY;
 	this.text = "";
-	this.radiusMultiplier = 10;
+	this.radiusMultiplier = 20;
 	this.connections = [];
 	
 	this.selectedBorderColor = "#FF0000";
@@ -77,7 +77,7 @@ Bubble.prototype.getLines = function () {
 
     for (var i = 1; i < words.length; i++) {
         var word = words[i];
-        if (!this.lineToLong(currentLine + " " + word)) {
+        if (!this.lineTooLong(currentLine + " " + word)) {
 			//Add word to line
             currentLine += " " + word;
         } else {
@@ -99,16 +99,61 @@ Bubble.prototype.getLines = function () {
 	return lines;
 };
 
-Bubble.prototype.lineToLong = function (line) {
+Bubble.prototype.lineTooLong = function (line) {
 	return this.context.measureText(line).width >= (2 * this.getRadiusX()) - (2 * Bubble.textPaddingX);
 };
 
 Bubble.prototype.contains = function (x, y) {
-	var pointCenterDistance = CanvasManager.distanceTo(x, y, this.centerX, this.centerY);
-	var angle = (Math.acos((x - this.centerX) / pointCenterDistance) * 180) / Math.PI;
-	var radiusPointX = this.centerX + (this.getRadiusX() * ((x - this.centerX) / pointCenterDistance));
-	var radiusPointY = this.centerY + (this.getRadiusY() * ((y - this.centerY) / pointCenterDistance));
-	var radius = CanvasManager.distanceTo(this.centerX, this.centerY, radiusPointX, radiusPointY);
+	var angle = Math.atan2(y - this.centerY, x - this.centerX);
+	var t = Math.atan((this.getRadiusX() * Math.tan(angle)) / this.getRadiusY());
+	var angleDeg = (-angle * 180) / Math.PI;
+	if (angleDeg > 90 && angleDeg < 180) {
+		t += Math.PI;
+	} else if (angleDeg < -90 && angleDeg > -180) {
+		t -= Math.PI;
+	}
+	var xComp = this.getRadiusX() * Math.cos(t);
+	var yComp = this.getRadiusY() * Math.sin(t);
 	
-	return radius > pointCenterDistance;
+	var radius = Math.sqrt((xComp * xComp) + (yComp * yComp));
+	var mouseRadius = CanvasManager.distanceTo(this.centerX, this.centerY, x, y);
+	
+	return radius >= mouseRadius;
+};
+
+Bubble.prototype.onEdge = function (x, y) {
+	var angle = Math.atan2(y - this.centerY, x - this.centerX);
+	var t = Math.atan((this.getRadiusX() * Math.tan(angle)) / this.getRadiusY());
+	var angleDeg = (-angle * 180) / Math.PI;
+	if (angleDeg > 90 && angleDeg < 180) {
+		t += Math.PI;
+	} else if (angleDeg < -90 && angleDeg > -180) {
+		t -= Math.PI;
+	}
+	var xComp = this.getRadiusX() * Math.cos(t);
+	var yComp = this.getRadiusY() * Math.sin(t);
+	
+	var radius = Math.sqrt((xComp * xComp) + (yComp * yComp));
+	var mouseRadius = CanvasManager.distanceTo(this.centerX, this.centerY, x, y);
+	var radiiDiff = Math.abs(mouseRadius - radius);
+	
+	return radiiDiff >= this.selectedBorderWidth - 4 && radiiDiff <= this.selectedBorderWidth + 4;
+};
+
+Bubble.prototype.changeSize = function (x, y) {
+	var angle = Math.atan2(y - this.centerY, x - this.centerX);
+	var t = Math.atan((this.getRadiusX() * Math.tan(angle)) / this.getRadiusY());
+	var angleDeg = (-angle * 180) / Math.PI;
+	if (angleDeg > 90 && angleDeg < 180) {
+		t += Math.PI;
+	} else if (angleDeg < -90 && angleDeg > -180) {
+		t -= Math.PI;
+	}
+	var xComp = this.getRadiusX() * Math.cos(t);
+	var yComp = this.getRadiusY() * Math.sin(t);
+	
+	var radius = Math.sqrt((xComp * xComp) + (yComp * yComp));
+	var mouseRadius = CanvasManager.distanceTo(this.centerX, this.centerY, x, y);
+	
+	this.radiusMultiplier *= mouseRadius / radius;
 };

@@ -130,11 +130,13 @@ var CanvasManager = function (context) {
 			state.valid = false;
 		}
 		
+		edgeCheck:
 		for (var i = 0; i < state.bubbles.length; i++) {
 			if (state.bubbles[i].onEdge(e.pageX, e.pageY)) {
 				if (state.changeCursorArrow(e.pageX, e.pageY, state.bubbles[i])) {
 					e.preventDefault();
 				}
+				break edgeCheck;
 			} else {
 				state.resetCursorArrow();
 			}

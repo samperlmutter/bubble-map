@@ -1,35 +1,35 @@
 var CanvasManager = function (context) {
 	this.context = context;
 	var state = this;
-	
+
 	this.valid = true;
 	this.dragging = false;
 	this.draggingEdge = false;
 	this.connectionStarted = false;
 	this.inControlPanel = false;
-	
+
 	this.bubbles = [];
 	this.selectedBubble = null;
 	this.selectedLine = null;
 	this.currentLine = null;
 	this.connections = [];
-	
+
 	this.dragOffsetX = 0;
 	this.dragOffsetY = 0;
 	this.refreshRate = 15;
-	
+
 	$("#canvas").get(0).addEventListener('selectstart', function (e) {
 		e.preventDefault();
 		return false;
 	}, false);
-	
+
 	$("#controlPanel").get(0).addEventListener('selectstart', function (e) {
 		if (state.dragging) {
 			e.preventDefault();
 		}
 		return false;
 	}, true);
-	
+
 	$("#canvas").dblclick(function (e) {
 		for (var i = 0; i < state.bubbles.length; i++) {
 			if (state.bubbles[i].contains(e.pageX, e.pageY)) {
@@ -39,7 +39,7 @@ var CanvasManager = function (context) {
 		state.bubbles.push(new Bubble(state.context, e.pageX, e.pageY));
 		state.valid = false;
 	});
-	
+
 	$("#canvas").mousedown(function (e) {
 		switch (e.button) {
 			//Left click
@@ -52,7 +52,7 @@ var CanvasManager = function (context) {
 						state.draggingEdge = true;
 						return;
 					}
-					
+
 					if (state.bubbles[i].contains(e.pageX, e.pageY)) {
 						state.selectedBubble = state.bubbles[i];
 						state.selectedLine = null;
@@ -60,6 +60,10 @@ var CanvasManager = function (context) {
 						state.dragOffsetY = e.pageY - state.selectedBubble.centerY;
 						state.valid = false;
 						state.dragging = true;
+
+						console.log(state.selectedBubble.getEdgeCoordinate.fromY(state.selectedBubble.centerY - 40).leftX);
+						console.log(state.selectedBubble.getEdgeCoordinate.fromY(state.selectedBubble.centerY - 40).rightX);
+
 						return;
 					}
 
@@ -70,7 +74,7 @@ var CanvasManager = function (context) {
 					}
 				}
 
-				for (var i  = state.connections.length - 1; i >= 0; i--) {
+				for (var i = state.connections.length - 1; i >= 0; i--) {
 					if (state.connections[i].contains(e.pageX, e.pageY)) {
 						state.selectedLine = state.connections[i];
 						state.selectedBubble = null;
@@ -86,7 +90,7 @@ var CanvasManager = function (context) {
 				}
 
 				break;
-			//Right click
+				//Right click
 			case 2:
 				for (var i = state.bubbles.length - 1; i >= 0; i--) {
 					if (!state.connectionStarted) {
@@ -101,12 +105,12 @@ var CanvasManager = function (context) {
 				break;
 		}
 	});
-	
+
 	$("#canvas").mouseup(function (e) {
 		state.dragging = false;
 		state.draggingEdge = false;
 	});
-	
+
 	$("#canvas").mousemove(function (e) {
 		var newCenterX = e.pageX - state.dragOffsetX;
 		var newCenterY = e.pageY - state.dragOffsetY;
@@ -114,7 +118,7 @@ var CanvasManager = function (context) {
 		var rightBound = $("#controlPanel").offset().left + $("#controlPanel").outerWidth(true);
 		var bottomBound = $("#controlPanel").offset().top + $("#controlPanel").outerHeight(true);
 		var topBound = $("#controlPanel").offset().top;
-		
+
 		if (state.dragging) {
 			if (state.inControlPanel) {
 				if (newCenterX > rightBound || newCenterX < leftBound || newCenterY > bottomBound || newCenterY < topBound) {
@@ -125,28 +129,28 @@ var CanvasManager = function (context) {
 				state.selectedBubble.centerX = newCenterX;
 				state.selectedBubble.centerY = newCenterY;
 			}
-			
+
 			state.valid = false;
 		}
-		
+
 		if (state.connectionStarted) {
 			state.currentLine.mouseX = e.pageX;
 			state.currentLine.mouseY = e.pageY;
 			state.valid = false;
 		}
-		
+
 		edgeCheck:
-		for (var i = 0; i < state.bubbles.length; i++) {
-			if (state.bubbles[i].onEdge(e.pageX, e.pageY)) {
-				if (state.changeCursorArrow(e.pageX, e.pageY, state.bubbles[i])) {
-					e.preventDefault();
+			for (var i = 0; i < state.bubbles.length; i++) {
+				if (state.bubbles[i].onEdge(e.pageX, e.pageY)) {
+					if (state.changeCursorArrow(e.pageX, e.pageY, state.bubbles[i])) {
+						e.preventDefault();
+					}
+					break edgeCheck;
+				} else {
+					state.resetCursorArrow();
 				}
-				break edgeCheck;
-			} else {
-				state.resetCursorArrow();
 			}
-		}
-		
+
 		if (state.draggingEdge) {
 			if (state.changeCursorArrow(e.pageX, e.pageY, state.selectedBubble)) {
 				e.preventDefault();
@@ -155,7 +159,7 @@ var CanvasManager = function (context) {
 			state.valid = false;
 		}
 	});
-	
+
 	$("#canvas").contextmenu(function (e) {
 		var notInBubble = true;
 		for (var i = 0; i < state.bubbles.length; i++) {
@@ -183,7 +187,7 @@ var CanvasManager = function (context) {
 			state.connectionStarted = false;
 		}
 	});
-	
+
 	setInterval(function () {
 		state.draw();
 	}, this.refreshRate);
@@ -199,7 +203,7 @@ CanvasManager.prototype.connectionExists = function (connection) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -210,11 +214,11 @@ CanvasManager.prototype.clear = function () {
 CanvasManager.prototype.draw = function () {
 	if (!this.valid) {
 		this.clear();
-		
+
 		for (var i = 0; i < this.connections.length; i++) {
 			this.connections[i].draw();
 		}
-		
+
 		if (this.selectedLine != null) {
 			this.selectedLine.drawSelected();
 		}
@@ -230,7 +234,7 @@ CanvasManager.prototype.draw = function () {
 		if (this.selectedBubble != null) {
 			this.selectedBubble.drawSelected();
 		}
-		
+
 		this.valid = true;
 	}
 };
@@ -238,7 +242,7 @@ CanvasManager.prototype.draw = function () {
 CanvasManager.prototype.changeCursorArrow = function (x, y, bubble) {
 	var angle = (Math.atan2(y - bubble.centerY, x - bubble.centerX) * 180) / Math.PI;
 	var currentCursorAngle = $("#canvas").get(0).style.cursor;
-	
+
 	if ((angle >= -6 && angle <= 6) || ((angle >= 174 && angle <= 180) || (angle >= -180 && angle <= -174))) {
 		$("#canvas").get(0).style.cursor = "ew-resize";
 	} else if ((angle <= -84 && angle >= -96) || (angle >= 86 && angle <= 96)) {
@@ -248,7 +252,7 @@ CanvasManager.prototype.changeCursorArrow = function (x, y, bubble) {
 	} else if ((angle < -96 && angle > -174) || (angle < 84 && angle > 6)) {
 		$("#canvas").get(0).style.cursor = "nw-resize";
 	}
-	
+
 	return $("#canvas").get(0).style.cursor != currentCursorAngle;
 };
 
